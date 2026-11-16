@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#080e19" />
+  <title>NEON STRIKE — Sector Nine</title>
+  <meta name="description" content="A neon tactical FPS arena. Survive enemy waves, unlock weapons, deploy gadgets and upgrade your loadout." />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="overrides.css" />
+</head>
+<body>
+  <main id="gameShell">
+    <canvas id="game" aria-label="First person game view"></canvas>
+    <div class="scanlines" aria-hidden="true"></div>
+    <div class="vignette" aria-hidden="true"></div>
+    <div id="damageFlash" aria-hidden="true"></div>
+    <div id="hud" class="hud hidden">
+      <div class="top-left">
+        <div class="brand-sm"><span class="brand-mark">N<span>●</span>S</span><span>NEON STRIKE <small>/ SECTOR 09</small></span></div>
+        <div class="mission"><span class="small-label">OPERATION</span><strong id="objective">ELIMINATE HOSTILES</strong></div>
+      </div>
+      <div class="top-center">
+        <div class="round-pill"><span class="small-label">WAVE</span><strong id="waveText">01</strong><span class="divider"></span><span class="small-label">HOSTILES</span><strong id="enemyText">05</strong></div>
+        <div class="round-progress"><div id="roundProgress"></div></div>
+      </div>
+      <div class="top-right">
+        <div class="credits"><span class="credit-icon">✦</span><span id="creditText">000</span><small>CR</small></div>
+        <div class="map-wrap"><canvas id="minimap" width="176" height="176" aria-label="Arena minimap"></canvas><span>TACTICAL RADAR <b>LIVE</b></span></div>
+      </div>
+      <div class="crosshair" id="crosshair"><i class="c1"></i><i class="c2"></i><i class="c3"></i><i class="c4"></i><b></b></div>
+      <div class="hitmarker" id="hitmarker">✕</div>
+      <div class="center-message" id="centerMessage"></div>
+      <div class="killfeed" id="killfeed"></div>
+      <div class="bottom-left">
+        <div class="stat-icon">✚</div>
+        <div class="vitals">
+          <div class="stat-heading"><span>HEALTH</span><strong id="healthValue">100</strong></div>
+          <div class="stat-track health"><div id="healthBar"></div></div>
+          <div class="stat-heading armor-heading"><span>ARMOR</span><strong id="armorValue">50</strong></div>
+          <div class="stat-track armor"><div id="armorBar"></div></div>
+        </div>
+        <div class="dash-stats"><span id="scoreText">000000</span><small>SCORE</small></div>
+      </div>
+      <div class="bottom-center">
+        <div class="ability" id="grenadeAbility"><kbd>G</kbd><span class="ability-icon">✹</span><span><strong>FRAG</strong><small id="grenadeCount">0 LEFT</small></span></div>
+        <div class="ability" id="medkitAbility"><kbd>H</kbd><span class="ability-icon">✚</span><span><strong>MEDKIT</strong><small id="medkitCount">0 LEFT</small></span></div>
+        <div class="ability" id="sentryAbility"><kbd>T</kbd><span class="ability-icon">⌖</span><span><strong>SENTRY</strong><small id="sentryCount">0 LEFT</small></span></div>
+        <div class="shop-hint"><kbd>B</kbd> ARMORY</div>
+      </div>
+      <div class="bottom-right">
+        <span id="weaponClass" class="weapon-class">STANDARD SIDEARM</span>
+        <div class="ammo"><span id="ammoValue">12</span><span class="ammo-sep">/</span><span id="reserveValue">96</span></div>
+        <div class="weapon-name"><b id="weaponName">MK.45 SIDEARM</b><span id="reloadText">R TO RELOAD</span></div>
+        <div class="ammo-notches" id="ammoNotches"></div>
+      </div>
+      <div class="tip-bar"><span>SHIFT <b>SPRINT</b></span><span>SPACE <b>JUMP</b></span><span>R <b>RELOAD</b></span><span>1–5 / SCROLL <b>WEAPONS</b></span><span>RIGHT CLICK <b>AIM</b></span></div>
+      <div class="lock-hint hidden" id="lockHint">CLICK THE ARENA TO CAPTURE MOUSE</div>
+    </div>
+
+    <section class="overlay visible" id="startScreen" aria-labelledby="startTitle">
+      <div class="menu-grid"></div>
+      <div class="start-frame">
+        <header class="menu-header"><span class="logo-mini"><span class="logo-diamond">◆</span> ORBITAL DEFENSE DIVISION</span><span>TACTICAL SIMULATION // 09</span></header>
+        <div class="start-content">
+          <div class="eyebrow"><span class="green-dot"></span> SINGLE PLAYER / ARENA SURVIVAL <span class="line"></span> V.01</div>
+          <h1 id="startTitle">NEON<br /><em>STRIKE</em><span class="h1-period">.</span></h1>
+          <p class="lead">SECTOR <span>09</span> <i>//</i> LAST STAND PROTOCOL</p>
+          <p class="description">The sector has been overrun by rogue combat units. Outlast their assault, earn credits, and build an unstoppable loadout. Every wave hits harder.</p>
+          <div class="mission-cards">
+            <div class="mission-card"><span class="card-symbol">⌖</span><span><b>PRECISION COMBAT</b><small>5 unique weapons</small></span></div>
+            <div class="mission-card"><span class="card-symbol">⚡</span><span><b>EVOLVING THREAT</b><small>Endless enemy waves</small></span></div>
+            <div class="mission-card"><span class="card-symbol">✦</span><span><b>BUILD YOUR KIT</b><small>Gadgets + upgrades</small></span></div>
+          </div>
+          <div class="start-actions"><button id="startBtn" class="primary-btn"><span>DEPLOY TO SECTOR</span><b>↗</b></button><div class="best-record"><small>PERSONAL BEST</small><strong id="bestDisplay">WAVE 00 <span>·</span> 0 PTS</strong></div></div>
+        </div>
+        <footer class="menu-footer"><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> MOVE</span><span><kbd>SPACE</kbd> JUMP</span><span><kbd>MOUSE</kbd> LOOK / FIRE</span><span><kbd>B</kbd> ARMORY</span><span><kbd>ESC</kbd> PAUSE</span></footer>
+      </div>
+      <div class="menu-aside"><span class="vertical-text">SECURE THE PERIMETER — SURVIVE THE NIGHT</span><div class="sector-num">09<span>/09</span></div></div>
+    </section>
+
+    <section class="overlay" id="pauseScreen" aria-labelledby="pauseTitle">
+      <div class="modal compact-modal">
+        <div class="modal-kicker">SYSTEM // SUSPENDED</div>
+        <h2 id="pauseTitle">PAUSED<span class="accent-dot">.</span></h2>
+        <p>Take a breath, operative. The sector can wait.</p>
+        <button id="resumeBtn" class="primary-btn full"><span>RESUME MISSION</span><b>↗</b></button>
+        <button id="restartPauseBtn" class="text-btn">RESTART RUN</button>
+        <div class="modal-small">WASD MOVE · SHIFT SPRINT · SPACE JUMP · R RELOAD<br />G GRENADE · H MEDKIT · T TURRET · B ARMORY</div>
+      </div>
+    </section>
+
+    <section class="overlay" id="shopScreen" aria-labelledby="shopTitle">
+      <div class="shop-panel">
+        <header class="shop-header"><div><div class="modal-kicker">SUPPLY TERMINAL // SECTOR 09</div><h2 id="shopTitle">THE <em>ARMORY</em><span class="accent-dot">.</span></h2><p id="shopSubtitle">RELOAD. REBUILD. RETURN TO THE FIGHT.</p></div><div class="shop-wallet"><small>AVAILABLE CREDITS</small><div>✦ <strong id="shopCredits">000</strong> <span>CR</span></div></div></header>
+        <div class="shop-tabs"><button class="tab active" data-tab="weapons">01 / WEAPONS</button><button class="tab" data-tab="upgrades">02 / UPGRADES</button><button class="tab" data-tab="equipment">03 / EQUIPMENT</button><span id="shopWave">WAVE 01 COMPLETE</span></div>
+        <div class="shop-items" id="shopItems"></div>
+        <footer class="shop-footer"><div class="shop-notice"><span>✦</span><p>Credits are earned by eliminating enemies. Purchases last for this run.</p></div><button class="primary-btn" id="nextWaveBtn"><span id="nextWaveLabel">NEXT WAVE</span><b>→</b></button></footer>
+      </div>
+    </section>
+
+    <section class="overlay" id="deathScreen" aria-labelledby="deathTitle">
+      <div class="modal death-modal"><div class="modal-kicker">SIGNAL LOST // MISSION TERMINATED</div><h2 id="deathTitle">OPERATIVE<br /><em>DOWN.</em></h2><div class="death-stats"><div><small>WAVE REACHED</small><strong id="finalWave">01</strong></div><div><small>ELIMINATIONS</small><strong id="finalKills">00</strong></div><div><small>FINAL SCORE</small><strong id="finalScore">0000</strong></div></div><p id="bestMessage">The sector needs you back out there.</p><button id="retryBtn" class="primary-btn full"><span>DEPLOY AGAIN</span><b>↗</b></button></div>
+    </section>
+  </main>
+  <script src="game.js" defer></script>
+</body>
+</html>
